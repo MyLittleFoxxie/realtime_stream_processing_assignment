@@ -1,0 +1,5 @@
+# Host-side dependencies for the one-time data prep only (reading the Kaggle xlsx).
+# The Spark Structured Streaming job itself runs inside Docker (apache/spark),
+# which already bundles Java + PySpark, so pyspark is intentionally NOT listed here.
+pandas
+openpyxl

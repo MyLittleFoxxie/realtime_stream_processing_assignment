@@ -1,0 +1,22 @@
+# Runs the Spark Structured Streaming job in a container so no local Java /
+# winutils setup is needed (matches the repo's "infrastructure is Docker-managed"
+# convention). The whole assignment_6/ folder is bind-mounted at /app, so the
+# host producer and the container share stream_input/, alerts/, etc.
+services:
+  spark:
+    image: spark:3.5.3               # Apache Spark Docker Official Image (bundles Java + PySpark)
+    container_name: spark_icu
+    user: root                       # write checkpoints/alerts on the bind mount without uid friction
+    working_dir: /app
+    environment:
+      - PYTHONPATH=/app              # makes `from src import config` importable
+      - SPARK_LOCAL_IP=127.0.0.1
+    volumes:
+      - ./:/app
+    command:
+      - /opt/spark/bin/spark-submit
+      - --master
+      - local[2]
+      - --conf
+      - spark.sql.adaptive.enabled=false
+      - /app/src/streaming_job.py
